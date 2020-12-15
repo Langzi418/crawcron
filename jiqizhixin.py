@@ -6,6 +6,8 @@ from bs4 import BeautifulSoup
 from crawlcron.conf.conf_op import write_update
 from crawlcron.conf.mysql_config import insert_db
 
+JI_QI_ZHI_XIN = 'jiqizhixin'
+
 
 def get_abstract():
     cookies = {
@@ -68,14 +70,15 @@ def parse_jiqizhixin():
     for table in tables:
         a = table.select_one('main > section > a')
         url = 'https://www.jiqizhixin.com' + a['href']
-        if parse_detail(get_detail(url), url):
+        params = parse_detail(get_detail(url), url)
+        if insert_db(params):
             success_num += 1
-        else:
-            break
+        # else:
+        #     break
         time.sleep(2)
 
     if success_num > 0:
-        write_update('conf/conf.json', 'jiqizhixin', success_num)
+        write_update('conf/conf.json', JI_QI_ZHI_XIN, success_num)
         print(f'机器之心更新了{success_num}篇文章。')
 
 
@@ -88,7 +91,8 @@ def parse_detail(html, url):
     article_content = soup.select_one('#js-article-content')
     content = article_content.get_text()
     field = 'AI'
-    return insert_db('ai', 'jiqizhixin', (title, content, url, field, date))
+    source = JI_QI_ZHI_XIN
+    return title, content, url, field, date, source
 
 
 if __name__ == '__main__':

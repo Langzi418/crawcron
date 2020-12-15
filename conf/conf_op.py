@@ -5,13 +5,20 @@ import time
 from crawlcron.conf.mysql_config import select_db
 
 
-def write_update(conf, src, num):
+def write_update(conf, source, num):
+    """
+
+    :param conf: 配置文件路径
+    :param source: 爬取来源
+    :param num: 更新数量
+    :return: 无
+    """
     if num == 0:
         return
     with open(conf, encoding='utf-8') as f:
         data = json.load(f)
     data['updated'] += num
-    src_dic = data['tables'][src]
+    src_dic = data['sources'][source]
     src_dic['last'] = str(time.time())
     src_dic['updated'] += num
     with open(conf, 'w', encoding='utf-8') as fd:
@@ -26,21 +33,22 @@ def read_last_updated(conf):
         return {}
 
     return_dic = {}
-    tables = data['tables']
-    for table in tables:
+    sources = data['sources']
+    for source in sources:
         updated_article = []
-        updated = tables[table]['updated']
+        updated = sources[source]['updated']
         if updated > 0:
-            results = select_db('ai', table, updated)
+            results = select_db(source, updated)
             for res in results:
                 article = {
                     'title': res[1],
-                    'url': res[2],
-                    'time': res[3],
-                    'content': res[4]
+                    'content': res[2],
+                    'url': res[3],
+                    'field': res[4],
+                    'date': res[5]
                 }
                 updated_article.append(article)
-                return_dic[table] = updated_article
+                return_dic[source] = updated_article
     return return_dic
 
 
@@ -50,7 +58,7 @@ def clear(conf):
         data = json.load(f)
 
     data['updated'] = 0
-    tables = data['tables']
+    tables = data['sources']
     for table in tables:
         tables[table]['last'] = ''
         tables[table]['updated'] = 0
@@ -58,8 +66,3 @@ def clear(conf):
     with open(conf, 'w', encoding='utf-8') as fd:
         json.dump(data, fd)
 
-
-if __name__ == '__main__':
-    # write_update('jiqizhixin', 10)
-    # read_last_updated('conf.json')
-    clear('conf.json')

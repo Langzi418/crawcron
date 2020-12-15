@@ -6,6 +6,7 @@ import schedule
 from crawlcron.jiqizhixin import parse_jiqizhixin
 
 if __name__ == '__main__':
+    print('开始执行爬取任务 ^_')
     # 初始启动时执行一次
     parse_jiqizhixin()
 
