@@ -1,17 +1,29 @@
-本地数据库名为 ai。  
-每个数据源为其中的一张表，例如 jiqizhixin
+本地数据库名为 military_multimode。  
+所有数据存在一张表spider_article。
 
 通过conf.json文件完成前后端交互，
 后端定时爬取数据库，插入数据库并更新conf.json文件
 例如：
 ```json
 {
-  "updated": 11, // 截至目前为止，总的更新数据量
-  "tables": {
+  "updated": 34,// 截至目前为止，总的更新数据量
+  "src": {
     // 每个数据源更新的数据量
     "jiqizhixin": {
-      "last": "1607261483.8658454", // 最后更新时间
-      "updated": 11 // 更新数据量
+      "last": "1608647358.403068",// 最后更新时间
+      "updated": 12// 更新数据量
+    },
+    "qbitai": {
+      "last": "1608647358.403068",
+      "updated": 8
+    },
+    "AItists": {
+      "last": "1608647358.403068",
+      "updated": 8
+    },
+    "elecfans": {
+      "last": "1608651965.5096123",
+      "updated": 6
     }
   }
 }
